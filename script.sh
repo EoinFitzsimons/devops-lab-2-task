@@ -31,7 +31,16 @@ echo "To run the script.sh run: \`bash script.sh\`" >> README.md
 git init
 git add .
 git commit -m "Final commit"
-git remote set-url origin https://github.com/EoinFitzsimons/devops-lab-2-task.git 2>/dev/null || git remote add origin https://github.com/EoinFitzsimons/devops-lab-2-task.git
+git remote set-url origin git@github.com:EoinFitzsimons/devops-lab-2-task.git 2>/dev/null || git remote add origin git@github.com:EoinFitzsimons/devops-lab-2-task.git
 git branch -M main
+# start ssh-agent if not running and add key(s)
+if ! ssh-add -l >/dev/null 2>&1; then
+	eval "$(ssh-agent -s)"
+fi
+if [ -f "$HOME/.ssh/id_ed25519" ]; then
+	ssh-add "$HOME/.ssh/id_ed25519" || true
+elif [ -f "$HOME/.ssh/id_rsa" ]; then
+	ssh-add "$HOME/.ssh/id_rsa" || true
+fi
 git push -u origin main
 echo Job Completed
