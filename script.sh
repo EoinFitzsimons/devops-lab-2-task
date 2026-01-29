@@ -31,7 +31,7 @@ echo "To run the script.sh run: \`bash script.sh\`" >> README.md
 git init
 git add .
 git commit -m "Final commit"
-git remote add origin https://github.com/EoinFitzsimons/devops-lab-2-task.git
+git remote set-url origin https://github.com/EoinFitzsimons/devops-lab-2-task.git 2>/dev/null || git remote add origin https://github.com/EoinFitzsimons/devops-lab-2-task.git
 git branch -M main
 git push -u origin main
 echo Job Completed
