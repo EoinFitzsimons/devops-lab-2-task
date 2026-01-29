@@ -29,3 +29,4 @@ echo Eoin Fitzsimons X23151374 >> README.md
 echo [Eoin's GitHub](https://github.com/EoinFitzsimons) >> README.md
 echo --- >> README.md
 echo "To run the script.sh run: \`bash script.sh\`" >> README.md
+echo "Job completed"
