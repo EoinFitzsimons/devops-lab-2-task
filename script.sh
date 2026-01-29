@@ -28,11 +28,27 @@ echo Eoin Fitzsimons X23151374 >> README.md
 echo "[Eoin's GitHub](https://github.com/EoinFitzsimons)" >> README.md
 echo --- >> README.md
 echo "To run the script.sh run: \`bash script.sh\`" >> README.md
-git init
+# initialize repo if missing
+if [ ! -d .git ]; then
+	git init
+fi
+
+# add changes and commit only if there are staged changes
 git add .
-git commit -m "Final commit"
-git remote set-url origin git@github.com:EoinFitzsimons/devops-lab-2-task.git 2>/dev/null || git remote add origin git@github.com:EoinFitzsimons/devops-lab-2-task.git
+if ! git diff --cached --quiet; then
+	git commit -m "Final commit"
+fi
+
+# ensure remote is set to SSH (idempotent)
+git remote set-url origin git@github.com:EoinFitzsimons/devops-lab-2-task.git 2>/dev/null || \
+	git remote add origin git@github.com:EoinFitzsimons/devops-lab-2-task.git
+
 git branch -M main
+
+# fetch and rebase to avoid non-fast-forward push failures
+git fetch origin main 2>/dev/null || true
+git pull --rebase origin main 2>/dev/null || true
+
 # start ssh-agent if not running and add key(s)
 if ! ssh-add -l >/dev/null 2>&1; then
 	eval "$(ssh-agent -s)"
@@ -42,5 +58,7 @@ if [ -f "$HOME/.ssh/id_ed25519" ]; then
 elif [ -f "$HOME/.ssh/id_rsa" ]; then
 	ssh-add "$HOME/.ssh/id_rsa" || true
 fi
+
+# push
 git push -u origin main
 echo Job Completed
