@@ -28,20 +28,37 @@ echo Eoin Fitzsimons X23151374 >> README.md
 echo "[Eoin's GitHub](https://github.com/EoinFitzsimons)" >> README.md
 echo --- >> README.md
 echo "To run the script.sh run: \`bash script.sh\`" >> README.md
+
 echo "Job completed"
 
-# Initialize git repo (if needed) and make an initial commit
-if [ ! -d .git ]; then
-	git init
+# --- Git steps (idempotent) ---
+# Initialise repo if not present
+if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+  git init
 fi
 
-# Ensure a local user.name/user.email so commit succeeds in fresh environments
+# Only included to ensure commits succeed in fresh environments where no global
+# user identity is set. This is a fallback so the script will not fail; it is
+# not intended as a replacement for configuring your real user details.
 if [ -z "$(git config user.email)" ]; then
-	git config user.email "you@example.com"
+  git config user.email "you@example.com"
 fi
 if [ -z "$(git config user.name)" ]; then
-	git config user.name "Your Name"
+  git config user.name "Your Name"
 fi
 
 git add .
-git commit -m "Initial commit - project files" || echo "Nothing to commit or commit failed"
+git commit -m "Final commit" || echo "Nothing to commit"
+
+# If a remote URL is supplied as the first argument, add or update `origin`
+if [ -n "$1" ]; then
+  if git remote get-url origin >/dev/null 2>&1; then
+    git remote set-url origin "$1"
+  else
+    git remote add origin "$1"
+  fi
+fi
+
+# Ensure branch name is `main` locally; do not push automatically (requires auth)
+git branch -M main
+echo "Setup complete. To push: git push -u origin main"
